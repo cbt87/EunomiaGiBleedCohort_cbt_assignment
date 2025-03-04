@@ -1,0 +1,298 @@
+---
+title: "Casey_Tilton_BI_Assignment_Final"
+format: 
+  html:
+    fig-width: 15 
+    fig-height: 8
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning=FALSE, message=FALSE)
+```
+
+
+## Load necessary packages
+
+```{r}
+library(tidyverse)
+library(forcats)
+library(knitr)
+library(lubridate)
+library(DescTools)
+```
+
+# Eunomia Database connection setup
+
+```{r}
+connectionDetails <- Eunomia::getEunomiaConnectionDetails()
+# connect to Eunomia GiBleed
+connection <- DatabaseConnector::connect(connectionDetails)
+
+# Build GiBleed Cohorts
+Eunomia::createCohorts(connectionDetails = connectionDetails)
+
+```
+
+# Test Connection and create dataframe for NSAIDs cohort
+
+```{r}
+sql <- "SELECT * FROM cohort WHERE COHORT_DEFINITION_ID = 4;"
+tb <- DatabaseConnector::querySql(connection = connection, sql = sql) |>
+  tibble::as_tibble()
+tb
+```
+
+# Summarize Cohort Characteristics
+
+# Demographics
+
+The code below joins the cohort table to the person table, and calculates the age of each person.
+
+```{r}
+sql <- "SELECT PERSON_ID, YEAR_OF_BIRTH,GENDER_SOURCE_VALUE, BIRTH_DATETIME FROM cohort INNER JOIN person ON
+cohort.SUBJECT_ID = person.PERSON_ID
+WHERE COHORT_DEFINITION_ID = 4;"
+
+demographics_df <- DatabaseConnector::querySql(connection = connection, sql = sql) |>
+  tibble::as_tibble() |>
+  mutate(AGE = as.integer(interval(BIRTH_DATETIME, Sys.Date()) / years(1)))
+  
+demographics_df
+
+```
+
+
+## Distribution of Age in Years
+
+The histogram below visualizes the distribution of age in the NSAID cohort. The distribution has a long right tail of patients over the age of 90.
+
+```{r}
+ggplot(demographics_df, aes(AGE)) +
+  geom_histogram(binwidth = 5, fill = "steelblue", color = "black") + 
+  labs(
+    x = "Age (in 5 year bins)", 
+    y = "Count of Patients", 
+    title = "Distribution of Age in NSAID Cohort"
+  ) +
+  theme_minimal(base_size = 14) + 
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    axis.text = element_text(color = "black"),
+    axis.title = element_text(face = "bold")
+  )
+```
+
+
+## Gender
+
+There are 52 more females in the cohort than males.
+
+```{r}
+demographics_df %>%
+  rename(Gender = GENDER_SOURCE_VALUE)|>
+  count(Gender) |>
+  mutate(Percentage = scales::percent(n / sum(n))) |>
+  kable(caption = "Gender Breakdown")
+```
+The chart below overlays histograms for men and women to show the differences in the patient count in 5 year age bins.
+
+```{r}
+ggplot(demographics_df, aes(AGE, fill = GENDER_SOURCE_VALUE)) +
+  geom_histogram(binwidth = 5, position = "identity", color = "black", , alpha = .5) + 
+  labs(
+    x = "Age(in 5 year bins)", 
+    y = "Count of Patients", 
+    title = "Distribution of Age in NSAID Cohort"
+  ) +
+  scale_fill_discrete(name = "Gender") +
+  theme_minimal(base_size = 14) + 
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    axis.text = element_text(color = "black"),
+    axis.title = element_text(face = "bold")
+  )
+```
+
+# Conditions at baseline
+
+The nested SQL query joins the cohort table with the person table and the condition_occurrence table. It filters the result to only include condition occurrences that occured before the cohort start date. Finally, I join the concept_name to each concept_id. 
+
+```{r}
+sql <- "
+SELECT concept.concept_name, nested.* FROM 
+(
+SELECT cohort.COHORT_START_DATE, co.* FROM cohort 
+INNER JOIN person ON cohort.SUBJECT_ID = person.PERSON_ID 
+INNER JOIN condition_occurrence co ON cohort.SUBJECT_ID = co.PERSON_ID
+WHERE co.CONDITION_START_DATE <  cohort.COHORT_START_DATE AND 
+cohort.COHORT_DEFINITION_ID = 4
+) nested 
+INNER JOIN concept ON nested.CONDITION_CONCEPT_ID = concept.concept_id
+;"
+
+baseline_conditions <- DatabaseConnector::querySql(connection = connection, sql = sql) |>
+    tibble::as_tibble()
+baseline_conditions
+
+```
+
+This chart visualizes the top 30 baseline conditions sorted by the total amount of times the condition_concept_id occurs across the entire cohort.The remainder of the conditions are lumped into an "other" category. 
+
+```{r}
+
+ggplot(baseline_conditions, aes(x = fct_rev(fct_lump_n(fct_infreq(CONCEPT_NAME), n = 30)))) + 
+  geom_bar(fill = "steelblue", color = "black")+
+  coord_flip()+
+  labs(x = "Condition", y = "Count of Condition Occurrences", title = "Top 30 Baseline Conditions by Occurrence Count for NSAID Cohort") +
+  theme_minimal(base_size = 14) + 
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    axis.text = element_text(color = "black"),
+    axis.title = element_text(face = "bold")
+  )
+```
+It is possible that the cohort could include patients that have had large number of occurrences of the same condition.To remove the potential effect of this type of outlier, the following code creates a dataframe that counts only one occurrence of a condition per person. The results below show that there are minimal changes in the ranked order between the two lists. However, the effect of multiple occurrences of the most common conditions is minimized.
+
+```{r}
+baseline_conditions_distinct <- baseline_conditions |>
+  distinct(CONCEPT_NAME, PERSON_ID, .keep_all=TRUE)
+
+baseline_conditions_distinct
+```
+
+This chart visualizes the top 30 baseline conditions sorted by the count of patients that have had an occurrence of the condition one or more times.
+
+```{r}
+ggplot(baseline_conditions_distinct, aes(x = fct_rev(fct_lump_n(fct_infreq(CONCEPT_NAME), n = 30)))) + 
+  geom_bar(fill = "steelblue", color = "black")+
+  coord_flip()+
+  labs(x = "Condition", y = "Count of patients exhibiting condition at least once", title = "Top 30 Baseline Conditions by Distinct Patient Count for NSAID Cohort")+
+  theme_minimal(base_size = 14) + 
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    axis.text = element_text(color = "black"),
+    axis.title = element_text(face = "bold")
+  )
+```
+
+# Drug use at baseline
+
+The SQL code below captures the concept names of each drug_exposure for the NSAID cohort that occurred before each patient's cohort start date. Some of the concept names are very long, so I created a new column called drug_name_trunc that is the first 45 characters of each text string.
+
+```{r}
+sql <- "
+SELECT concept.concept_name, nested.* FROM (
+SELECT * from cohort INNER JOIN
+drug_exposure de ON
+de.person_id = cohort.subject_id 
+WHERE de.drug_exposure_start_date <  cohort.COHORT_START_DATE AND 
+cohort.COHORT_DEFINITION_ID = 4
+) nested INNER JOIN concept ON
+nested.drug_concept_id = concept.concept_id
+;"
+
+drug_exposure_baseline <- DatabaseConnector::querySql(connection = connection, sql = sql) |>
+  tibble::as_tibble() |>
+  mutate (drug_name_trunc = substr(CONCEPT_NAME, 1, 45))
+  
+
+drug_exposure_baseline
+
+```
+
+```{r}
+ggplot(drug_exposure_baseline, aes(x = fct_rev(fct_lump_n(fct_infreq(drug_name_trunc), n = 30)))) + 
+  geom_bar(fill = "steelblue", color = "black")+
+  coord_flip()+
+  labs(x = "Drug", y = "Count of drug exposures", title = "Top 30 Drugs by exposure count for NSAID Cohort pre-idex")+
+  theme_minimal(base_size = 14) + 
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    axis.text = element_text(color = "black"),
+    axis.title = element_text(face = "bold")
+  )
+```
+
+```{r}
+drug_exposures_distinct <- drug_exposure_baseline |>
+  distinct(CONCEPT_NAME, PERSON_ID, .keep_all=TRUE)
+
+ggplot(drug_exposures_distinct, aes(x = fct_rev(fct_lump_n(fct_infreq(drug_name_trunc), n = 30)))) + 
+  geom_bar(fill = "steelblue", color = "black")+
+  coord_flip()+
+  labs(x = "Drug", y = "Count of patients exposed to drug at least once", title = "Top 30 Drugs by patient count for NSAID Cohort pre-idex")+
+  theme_minimal(base_size = 14) + 
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    axis.text = element_text(color = "black"),
+    axis.title = element_text(face = "bold")
+  )
+
+```
+
+# Outcomes Post-index
+
+The outcomes dataframe includes condition occurrences for each patient that occurred on or after their cohort start date. 
+```{r}
+sql <- "
+SELECT concept.concept_name, nested.* FROM (
+
+SELECT cohort.COHORT_START_DATE, co.* FROM cohort INNER JOIN person ON
+cohort.SUBJECT_ID = person.PERSON_ID INNER JOIN condition_occurrence co ON
+cohort.SUBJECT_ID = co.PERSON_ID
+WHERE co.CONDITION_START_DATE >=  cohort.COHORT_START_DATE AND 
+cohort.COHORT_DEFINITION_ID = 4
+) nested INNER JOIN concept ON
+nested.CONDITION_CONCEPT_ID = concept.concept_id
+;"
+
+outcomes <- DatabaseConnector::querySql(connection = connection, sql = sql) |>
+    tibble::as_tibble()
+outcomes
+
+```
+
+```{r}
+ggplot(outcomes, aes(x = fct_rev(fct_lump_n(fct_infreq(CONCEPT_NAME), n = 30)))) + 
+  geom_bar(fill = "steelblue", color = "black")+
+  coord_flip() + 
+  labs(x = "Condition", y = "Count of Condition Occurrences", title = "Top 30 Outcomes by Occurrence Count post-index for NSAID Cohort")+
+  theme_minimal(base_size = 14) + 
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    axis.text = element_text(color = "black"),
+    axis.title = element_text(face = "bold")
+  )
+```
+When counting only one occurrence per patient, Osteoarthritis is the most common outcome for the NSAID cohort post index. When sorting the condition list by total occurrence count, it is the fourth most common
+
+```{r}
+outcomes_distinct <- outcomes |>
+  distinct(CONCEPT_NAME, PERSON_ID, .keep_all=TRUE)
+
+
+ggplot(outcomes_distinct, aes(x = fct_rev(fct_lump_n(fct_infreq(CONCEPT_NAME), n = 30)))) + 
+  geom_bar(fill = "steelblue", color = "black")+
+  coord_flip() + 
+  labs(x = "Condition", y = "Count of patients exhibiting condition at least once", title = "Top 30 Outcomes by Distinct Patient Count Post-Index for NSAID Cohort")+
+  theme_minimal(base_size = 14) + 
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    axis.text = element_text(color = "black"),
+    axis.title = element_text(face = "bold")
+  )
+```
+
+
+
+
+## Citations
+
+I occasionally used Chatgpt as a programming aid to remind me of R syntax and quarto formatting tips. For example,
+
+"I have a dataframe with a categorical variable with very long text strings. Before I turn this categorical variable into the x axis of a bar chart in ggplot, how do I only include the first 15 characters of each string using dplyr?"
+
+"I have a dataframe in R with a column BIRTH_DATETIME with type <S3: POSIXct>. How do I subtract the birth_datetime from the current date to calculate age?"
+
+"When I render this chart in quarto, part of the title is cut off because it is too long. How can I change the settings of the markdown file so that the entire text is shown on the chart? "
+
