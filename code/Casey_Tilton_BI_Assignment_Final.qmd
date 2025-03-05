@@ -10,13 +10,12 @@ format:
 
 
 
-```{r setup}
+```{r setup, warning=FALSE, message=FALSE}
 
 library(tidyverse)
 library(forcats)
 library(knitr)
 library(lubridate)
-library(DescTools)
 
 knitr::opts_chunk$set(warning=FALSE, message=FALSE)
 

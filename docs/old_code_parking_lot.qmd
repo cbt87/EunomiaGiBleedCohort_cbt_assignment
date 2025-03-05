@@ -1,0 +1,377 @@
+---
+title: "Casey_BI_Assignment"
+author: "Casey Tilton"
+format: html
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
+
+## Load necessary packages
+
+```{r}
+library(tidyverse)
+library(forcats)
+library(lubridate)
+library(DescTools)
+```
+
+# Eunomia Database connection setup
+
+```{r}
+connectionDetails <- Eunomia::getEunomiaConnectionDetails()
+# connect to Eunomia GiBleed
+connection <- DatabaseConnector::connect(connectionDetails)
+
+# Build GiBleed Cohorts
+Eunomia::createCohorts(connectionDetails = connectionDetails)
+
+```
+
+# Test Connection and create dataframe for NSAIDs cohort
+
+```{r}
+sql <- "SELECT * FROM cohort WHERE COHORT_DEFINITION_ID = 4;"
+tb <- DatabaseConnector::querySql(connection = connection, sql = sql) |>
+  tibble::as_tibble()
+tb
+```
+
+# Summarize Cohort Characteristics
+
+# Demographics
+
+```{r}
+sql <- "SELECT * FROM cohort INNER JOIN person ON
+cohort.SUBJECT_ID = person.PERSON_ID
+WHERE COHORT_DEFINITION_ID = 4;"
+
+demographics_df <- DatabaseConnector::querySql(connection = connection, sql = sql) |>
+  tibble::as_tibble() |>
+  mutate(AGE = year(Sys.Date()) - YEAR_OF_BIRTH)
+  
+demographics_df
+
+```
+
+## Distribution of Age in Years
+
+```{r}
+ggplot(demographics_df, aes(AGE)) + 
+  geom_bar() +
+  labs(x = "Age", y = "Count of Patients", title = "Distribution of Age in NSAID Cohort")
+  
+```
+
+## Gender
+
+```{r}
+ggplot(demographics_df, aes(GENDER_SOURCE_VALUE)) + 
+  geom_bar()+
+  labs(x = "Gender", y = "Count of Patients", title = "Gender Count in NSAID Cohort")
+```
+
+```{r}
+ggplot(demographics_df, aes(AGE, fill = GENDER_SOURCE_VALUE)) + 
+  geom_bar() +
+  labs(x = "Age", y = "Count of Patients", title = "Distribution of Age in NSAID Cohort")+
+  theme_minimal()
+  
+```
+
+```{r}
+ggplot(demographics_df, aes(AGE, fill = GENDER_SOURCE_VALUE)) + 
+  geom_bar(position = "identity", alpha = 0.4) +
+  labs(x = "Age", y = "Count of Patients", title = "Distribution of Age in NSAID Cohort")
+  
+```
+
+```{r}
+ggplot(demographics_df, aes(AGE, fill = GENDER_SOURCE_VALUE)) + 
+  geom_bar(position = "dodge") +
+  labs(x = "Age", y = "Count of Patients", title = "Distribution of Age in NSAID Cohort")
+  
+```
+
+# Conditions at baseline
+
+```{r}
+sql <- "SELECT cohort.COHORT_DEFINITION_ID, cohort.COHORT_START_DATE, co.* FROM cohort  JOIN person ON
+cohort.SUBJECT_ID = person.PERSON_ID  JOIN condition_occurrence co ON
+cohort.SUBJECT_ID = co.PERSON_ID
+WHERE co.CONDITION_START_DATE <  cohort.COHORT_START_DATE;"
+
+baseline_conditions <- DatabaseConnector::querySql(connection = connection, sql = sql) |>
+    tibble::as_tibble()
+baseline_conditions
+```
+
+```{r}
+sql <- "
+SELECT concept.concept_name, nested.* FROM (
+
+SELECT cohort.COHORT_START_DATE, co.* FROM cohort  JOIN person ON
+cohort.SUBJECT_ID = person.PERSON_ID  JOIN condition_occurrence co ON
+cohort.SUBJECT_ID = co.PERSON_ID
+WHERE co.CONDITION_START_DATE <  cohort.COHORT_START_DATE AND 
+cohort.COHORT_DEFINITION_ID = 4
+) nested INNER JOIN concept ON
+nested.CONDITION_CONCEPT_ID = concept.concept_id
+;"
+
+baseline_conditions <- DatabaseConnector::querySql(connection = connection, sql = sql) |>
+    tibble::as_tibble()
+
+
+ggplot(baseline_conditions, aes(x = fct_rev(fct_lump_n(fct_infreq(CONCEPT_NAME), n = 30)))) + 
+  geom_bar()+
+  coord_flip()+
+  labs(x = "Condition", y = "Count of Condition Occurrences", title = "Top 30 Baseline Conditions by Occurrence Count for NSAID Cohort")
+```
+
+```{r}
+baseline_conditions_distinct <- baseline_conditions |>
+  distinct(CONCEPT_NAME, PERSON_ID, .keep_all=TRUE)
+
+baseline_conditions_distinct
+```
+
+```{r}
+baseline_count <- baseline_conditions |>
+  count(CONCEPT_NAME, sort=TRUE)
+
+baseline_distinct_count <- baseline_conditions_distinct |>
+  count(CONCEPT_NAME, sort=TRUE)
+
+kendall_tau <- function(list1, list2) {
+  rank1 <- match(list1, list1)
+  rank2 <- match(list1, list2)
+  return(KendallTauB(rank1, rank2))
+}
+
+kendall_tau(baseline_count$CONCEPT_NAME, baseline_distinct_count$CONCEPT_NAME)
+
+
+
+cor(match(baseline_count$CONCEPT_NAME, baseline_count$CONCEPT_NAME), match(baseline_count$CONCEPT_NAME, baseline_distinct_count$CONCEPT_NAME), method = "spearman")
+
+```
+
+```{r}
+ggplot(baseline_conditions_distinct, aes(x = fct_rev(fct_lump_n(fct_infreq(CONCEPT_NAME), n = 30)))) + 
+  geom_bar()+
+  coord_flip()+
+  labs(x = "Condition", y = "Count of patients exhibiting condition at least once", title = "Top 30 Baseline Conditions by Distinct Patient Count for NSAID Cohort")
+```
+
+# Drug use at baseline
+
+```{r}
+sql <- "
+
+SELECT * from cohort INNER JOIN
+drug_exposure de ON
+de.person_id = cohort.subject_id 
+WHERE de.drug_exposure_start_date <  cohort.COHORT_START_DATE AND 
+cohort.COHORT_DEFINITION_ID = 4
+
+;"
+
+drug_exposure_baseline <- DatabaseConnector::querySql(connection = connection, sql = sql) |>
+    tibble::as_tibble()
+
+drug_exposure_baseline
+```
+
+```{r}
+sql <- "
+SELECT concept.concept_name, nested.* FROM (
+SELECT * from cohort INNER JOIN
+drug_exposure de ON
+de.person_id = cohort.subject_id 
+WHERE de.drug_exposure_start_date <  cohort.COHORT_START_DATE AND 
+cohort.COHORT_DEFINITION_ID = 4
+) nested INNER JOIN concept ON
+nested.drug_concept_id = concept.concept_id
+;"
+
+drug_exposure_baseline <- DatabaseConnector::querySql(connection = connection, sql = sql) |>
+  tibble::as_tibble() |>
+  mutate (drug_name_trunc = substr(CONCEPT_NAME, 1, 45))
+  
+
+drug_exposure_baseline
+
+ggplot(drug_exposure_baseline, aes(x = fct_rev(fct_lump_n(fct_infreq(drug_name_trunc), n = 30)))) + 
+  geom_bar()+
+  coord_flip()+
+  labs(x = "Drug", y = "Count of drug exposures", title = "Top 30 Drugs by exposure count for NSAID Cohort pre-idex")
+```
+
+```{r}
+drug_exposures_distinct <- drug_exposure_baseline |>
+  distinct(CONCEPT_NAME, PERSON_ID, .keep_all=TRUE)
+
+drug_exposures_distinct
+
+ggplot(drug_exposures_distinct, aes(x = fct_rev(fct_lump_n(fct_infreq(drug_name_trunc), n = 30)))) + 
+  geom_bar()+
+  coord_flip()+
+  labs(x = "Drug", y = "Count of patients exposed to drug at least once", title = "Top 30 Drugs by patient count for NSAID Cohort pre-idex")
+
+```
+
+# Outcomes Post-index
+
+```{r}
+sql <- "SELECT cohort.COHORT_START_DATE, co.* FROM cohort INNER JOIN person ON
+cohort.SUBJECT_ID = person.PERSON_ID INNER JOIN condition_occurrence co ON
+cohort.SUBJECT_ID = co.PERSON_ID
+WHERE co.CONDITION_START_DATE >=  cohort.COHORT_START_DATE AND 
+cohort.COHORT_DEFINITION_ID = 4;"
+
+outcomes <- DatabaseConnector::querySql(connection = connection, sql = sql) |>
+    tibble::as_tibble()
+outcomes
+```
+
+```{r}
+sql <- "
+SELECT concept.concept_name, nested.* FROM (
+
+SELECT cohort.COHORT_START_DATE, co.* FROM cohort INNER JOIN person ON
+cohort.SUBJECT_ID = person.PERSON_ID INNER JOIN condition_occurrence co ON
+cohort.SUBJECT_ID = co.PERSON_ID
+WHERE co.CONDITION_START_DATE >=  cohort.COHORT_START_DATE AND 
+cohort.COHORT_DEFINITION_ID = 4
+) nested INNER JOIN concept ON
+nested.CONDITION_CONCEPT_ID = concept.concept_id
+;"
+
+
+outcomes <- DatabaseConnector::querySql(connection = connection, sql = sql) |>
+    tibble::as_tibble()
+outcomes
+
+ggplot(outcomes, aes(x = fct_rev(fct_lump_n(fct_infreq(CONCEPT_NAME), n = 30)))) + 
+  geom_bar()+
+  coord_flip() + 
+  theme_minimal()+
+  labs(x = "Condition", y = "Count of Condition Occurrences", title = "Top 30 Outcomes by Occurrence Count post-index for NSAID Cohort")
+  
+
+```
+
+```{r}
+outcomes_distinct <- outcomes |>
+  distinct(CONCEPT_NAME, PERSON_ID, .keep_all=TRUE)
+
+outcomes_distinct
+
+outcomes_count <- outcomes |>
+  count(CONCEPT_NAME, sort=TRUE)
+
+outcomes_distinct_count <- outcomes_distinct |>
+  count(CONCEPT_NAME, sort=TRUE)
+outcomes_count
+outcomes_distinct_count
+```
+
+### comparing order of outcome conditions sorted by count to the order of distinct outcomes per person sorted
+
+```{r}
+cor(match(outcomes_count$CONCEPT_NAME, outcomes_count$CONCEPT_NAME), match(outcomes_count$CONCEPT_NAME, outcomes_distinct_count$CONCEPT_NAME), method = "spearman")
+
+kendall_tau(outcomes_count$CONCEPT_NAME, outcomes_distinct_count$CONCEPT_NAME)
+```
+
+###comparing order of baseline conditions to the outcomes conditions
+
+```{r}
+cor(match(outcomes_count$CONCEPT_NAME, outcomes_count$CONCEPT_NAME), match(outcomes_count$CONCEPT_NAME, outcomes_distinct_count$CONCEPT_NAME), method = "spearman")
+
+kendall_tau(baseline_count$CONCEPT_NAME, outcomes_count$CONCEPT_NAME)
+kendall_tau(baseline_distinct_count$CONCEPT_NAME, outcomes_distinct_count$CONCEPT_NAME)
+```
+
+```{r}
+new_conditions <- setdiff(outcomes_count$CONCEPT_NAME, baseline_count$CONCEPT_NAME)
+
+new_conditions
+baseline_count
+```
+
+```{r}
+
+# Create a dataframe with rankings
+conditions_rank_df <- data.frame(name = baseline_count$CONCEPT_NAME, 
+                 position_list1 = seq_along(baseline_count$CONCEPT_NAME),
+                 position_list2 = match(baseline_count$CONCEPT_NAME, outcomes_count$CONCEPT_NAME)) |>
+  head(20)
+
+
+
+#Plot the reordering
+ggplot(conditions_rank_df, aes(x = position_list1, y = position_list2, label = name)) +
+  geom_point(size = 4, color = "blue") +
+  geom_text(vjust = -0.5) +
+  geom_segment(aes(xend = position_list1, yend = position_list2), arrow = arrow(length = unit(0.2, "cm"))) +
+  labs(title = "Order Comparison of Two Lists",
+       x = "Order in List 1",
+       y = "Order in List 2") +
+  theme_minimal()
+```
+
+```{r}
+
+# Create a dataframe with rankings
+distinct_conditions_rank_df <- data.frame(name = baseline_distinct_count$CONCEPT_NAME, 
+                 position_list1 = seq_along(baseline_distinct_count$CONCEPT_NAME),
+                 position_list2 = match(baseline_distinct_count$CONCEPT_NAME, outcomes_distinct_count$CONCEPT_NAME)) |>
+  head(20)
+
+
+
+#Plot the reordering
+ggplot(distinct_conditions_rank_df, aes(x = position_list1, y = position_list2, label = name)) +
+  geom_point(size = 4, color = "blue") +
+  geom_text(vjust = -0.5) +
+  geom_segment(aes(xend = position_list1, yend = position_list2), arrow = arrow(length = unit(0.2, "cm"))) +
+  labs(title = "Order Comparison of Two Lists",
+       x = "Order in List 1",
+       y = "Order in List 2") +
+  theme_minimal()
+```
+
+```{r}
+distinct_conditions_rank_df
+```
+
+## Citations
+
+I occasionally used Chatgpt as a programming aid to remind me of R syntax. For example,
+
+"I have a dataframe with a categorical variable with very long text strings. Before I turn this categorical variable into the x axis of a bar chart in ggplot, how do I only include the first 15 characters of each string using dplyr?"
+
+"I have a dataframe in R with a column BIRTH_DATETIME with type <S3: POSIXct>. How do I subtract the birth_datetime from the current date to calculate age?"
+
+"When I render this chart in quarto, part of the title is cut off because it is too long. How can I change the settings of the markdown file so that the entire text is shown on the chart? "

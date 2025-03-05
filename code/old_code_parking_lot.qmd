@@ -115,11 +115,10 @@ ggplot(demographics_df, aes(AGE, fill = GENDER_SOURCE_VALUE)) +
 # Conditions at baseline
 
 ```{r}
-sql <- "SELECT cohort.COHORT_START_DATE, co.* FROM cohort INNER JOIN person ON
-cohort.SUBJECT_ID = person.PERSON_ID INNER JOIN condition_occurrence co ON
+sql <- "SELECT cohort.COHORT_DEFINITION_ID, cohort.COHORT_START_DATE, co.* FROM cohort  JOIN person ON
+cohort.SUBJECT_ID = person.PERSON_ID  JOIN condition_occurrence co ON
 cohort.SUBJECT_ID = co.PERSON_ID
-WHERE co.CONDITION_START_DATE <  cohort.COHORT_START_DATE AND 
-cohort.COHORT_DEFINITION_ID = 4;"
+WHERE co.CONDITION_START_DATE <  cohort.COHORT_START_DATE;"
 
 baseline_conditions <- DatabaseConnector::querySql(connection = connection, sql = sql) |>
     tibble::as_tibble()
@@ -130,8 +129,8 @@ baseline_conditions
 sql <- "
 SELECT concept.concept_name, nested.* FROM (
 
-SELECT cohort.COHORT_START_DATE, co.* FROM cohort INNER JOIN person ON
-cohort.SUBJECT_ID = person.PERSON_ID INNER JOIN condition_occurrence co ON
+SELECT cohort.COHORT_START_DATE, co.* FROM cohort  JOIN person ON
+cohort.SUBJECT_ID = person.PERSON_ID  JOIN condition_occurrence co ON
 cohort.SUBJECT_ID = co.PERSON_ID
 WHERE co.CONDITION_START_DATE <  cohort.COHORT_START_DATE AND 
 cohort.COHORT_DEFINITION_ID = 4
