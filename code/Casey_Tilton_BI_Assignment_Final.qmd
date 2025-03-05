@@ -2,6 +2,7 @@
 title: "Casey_Tilton_BI_Assignment_Final"
 format: 
   html:
+    embed-resources: true
     fig-width: 15 
     fig-height: 8
 ---

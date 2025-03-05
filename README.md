@@ -1,3 +1,20 @@
+# Summary
+
+This repository contains Casey Tilton's RWE Data Analyst Programming assignment. All of the results for the project are located within the code folder. 
+
+# Repo Structure
+```
+.
+├─ code
+│  ├─ Casey_Tilton_BI_Assignment_Final.qmd   # Quarto markdown file containing all code and analysis
+│  ├─ Casey_Tilton_BI_Assignment_Final.html  # knitted quarto file in html
+│  ├─ RWE_Assignment
+│     └─app.R                                # shiny dashboard
+
+```
+
+
+
 # Eunomia Gi Bleed Cohort
 
 This repository is meant to set up a simple OMOP/OHDSI testing environment.

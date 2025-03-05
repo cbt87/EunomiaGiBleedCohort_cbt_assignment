@@ -15,6 +15,10 @@ library(tidyverse)
 library(forcats)
 library(lubridate)
 
+# Setting a global theme
+theme_set(
+  theme_minimal(base_size = 14))
+
 
 connectionDetails <- Eunomia::getEunomiaConnectionDetails()
 # connect to Eunomia GiBleed
