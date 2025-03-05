@@ -6,20 +6,35 @@ format:
     fig-height: 8
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(warning=FALSE, message=FALSE)
-```
+## Set up
 
 
-## Load necessary packages
 
-```{r}
+```{r setup}
+
 library(tidyverse)
 library(forcats)
 library(knitr)
 library(lubridate)
 library(DescTools)
+
+knitr::opts_chunk$set(warning=FALSE, message=FALSE)
+
+
+# Setting a global theme
+theme_set(
+  theme_minimal(base_size = 20) +
+    theme(
+      plot.title = element_text(hjust = 0.5, face = "bold"),
+      axis.text = element_text(color = "black"),
+      axis.title = element_text(face = "bold")
+    )
+)
+
 ```
+
+
+
 
 # Eunomia Database connection setup
 
@@ -72,14 +87,7 @@ ggplot(demographics_df, aes(AGE)) +
   labs(
     x = "Age (in 5 year bins)", 
     y = "Count of Patients", 
-    title = "Distribution of Age in NSAID Cohort"
-  ) +
-  theme_minimal(base_size = 14) + 
-  theme(
-    plot.title = element_text(hjust = 0.5, face = "bold"),
-    axis.text = element_text(color = "black"),
-    axis.title = element_text(face = "bold")
-  )
+    title = "Distribution of Age in NSAID Cohort")
 ```
 
 
@@ -104,13 +112,7 @@ ggplot(demographics_df, aes(AGE, fill = GENDER_SOURCE_VALUE)) +
     y = "Count of Patients", 
     title = "Distribution of Age in NSAID Cohort"
   ) +
-  scale_fill_discrete(name = "Gender") +
-  theme_minimal(base_size = 14) + 
-  theme(
-    plot.title = element_text(hjust = 0.5, face = "bold"),
-    axis.text = element_text(color = "black"),
-    axis.title = element_text(face = "bold")
-  )
+  scale_fill_discrete(name = "Gender") 
 ```
 
 # Conditions at baseline
@@ -143,13 +145,7 @@ This chart visualizes the top 30 baseline conditions sorted by the total amount 
 ggplot(baseline_conditions, aes(x = fct_rev(fct_lump_n(fct_infreq(CONCEPT_NAME), n = 30)))) + 
   geom_bar(fill = "steelblue", color = "black")+
   coord_flip()+
-  labs(x = "Condition", y = "Count of Condition Occurrences", title = "Top 30 Baseline Conditions by Occurrence Count for NSAID Cohort") +
-  theme_minimal(base_size = 14) + 
-  theme(
-    plot.title = element_text(hjust = 0.5, face = "bold"),
-    axis.text = element_text(color = "black"),
-    axis.title = element_text(face = "bold")
-  )
+  labs(x = "Condition", y = "Count of Condition Occurrences", title = str_wrap("Top 30 Baseline Conditions by Occurrence Count for NSAID Cohort", width = 40))
 ```
 It is possible that the cohort could include patients that have had large number of occurrences of the same condition.To remove the potential effect of this type of outlier, the following code creates a dataframe that counts only one occurrence of a condition per person. The results below show that there are minimal changes in the ranked order between the two lists. However, the effect of multiple occurrences of the most common conditions is minimized.
 
@@ -166,13 +162,7 @@ This chart visualizes the top 30 baseline conditions sorted by the count of pati
 ggplot(baseline_conditions_distinct, aes(x = fct_rev(fct_lump_n(fct_infreq(CONCEPT_NAME), n = 30)))) + 
   geom_bar(fill = "steelblue", color = "black")+
   coord_flip()+
-  labs(x = "Condition", y = "Count of patients exhibiting condition at least once", title = "Top 30 Baseline Conditions by Distinct Patient Count for NSAID Cohort")+
-  theme_minimal(base_size = 14) + 
-  theme(
-    plot.title = element_text(hjust = 0.5, face = "bold"),
-    axis.text = element_text(color = "black"),
-    axis.title = element_text(face = "bold")
-  )
+  labs(x = "Condition", y = "Count of patients exhibiting condition at least once", title = str_wrap("Top 30 Baseline Conditions by Distinct Patient Count for NSAID Cohort",width = 40))
 ```
 
 # Drug use at baseline
@@ -204,13 +194,7 @@ drug_exposure_baseline
 ggplot(drug_exposure_baseline, aes(x = fct_rev(fct_lump_n(fct_infreq(drug_name_trunc), n = 30)))) + 
   geom_bar(fill = "steelblue", color = "black")+
   coord_flip()+
-  labs(x = "Drug", y = "Count of drug exposures", title = "Top 30 Drugs by exposure count for NSAID Cohort pre-idex")+
-  theme_minimal(base_size = 14) + 
-  theme(
-    plot.title = element_text(hjust = 0.5, face = "bold"),
-    axis.text = element_text(color = "black"),
-    axis.title = element_text(face = "bold")
-  )
+  labs(x = "Drug", y = "Count of drug exposures", title = str_wrap("Top 30 Drugs by exposure count for NSAID Cohort pre-index", width = 40))
 ```
 
 ```{r}
@@ -220,13 +204,7 @@ drug_exposures_distinct <- drug_exposure_baseline |>
 ggplot(drug_exposures_distinct, aes(x = fct_rev(fct_lump_n(fct_infreq(drug_name_trunc), n = 30)))) + 
   geom_bar(fill = "steelblue", color = "black")+
   coord_flip()+
-  labs(x = "Drug", y = "Count of patients exposed to drug at least once", title = "Top 30 Drugs by patient count for NSAID Cohort pre-idex")+
-  theme_minimal(base_size = 14) + 
-  theme(
-    plot.title = element_text(hjust = 0.5, face = "bold"),
-    axis.text = element_text(color = "black"),
-    axis.title = element_text(face = "bold")
-  )
+  labs(x = "Drug", y = "Count of patients exposed to drug at least once", title = str_wrap("Top 30 Drugs by Patient Count for NSAID Cohort Pre-index", width = 40))
 
 ```
 
@@ -256,13 +234,7 @@ outcomes
 ggplot(outcomes, aes(x = fct_rev(fct_lump_n(fct_infreq(CONCEPT_NAME), n = 30)))) + 
   geom_bar(fill = "steelblue", color = "black")+
   coord_flip() + 
-  labs(x = "Condition", y = "Count of Condition Occurrences", title = "Top 30 Outcomes by Occurrence Count post-index for NSAID Cohort")+
-  theme_minimal(base_size = 14) + 
-  theme(
-    plot.title = element_text(hjust = 0.5, face = "bold"),
-    axis.text = element_text(color = "black"),
-    axis.title = element_text(face = "bold")
-  )
+  labs(x = "Condition", y = "Count of Condition Occurrences", title = str_wrap("Top 30 Outcomes by Occurrence Count post-index for NSAID Cohort", width = 40))
 ```
 When counting only one occurrence per patient, Osteoarthritis is the most common outcome for the NSAID cohort post index. When sorting the condition list by total occurrence count, it is the fourth most common
 
@@ -274,13 +246,26 @@ outcomes_distinct <- outcomes |>
 ggplot(outcomes_distinct, aes(x = fct_rev(fct_lump_n(fct_infreq(CONCEPT_NAME), n = 30)))) + 
   geom_bar(fill = "steelblue", color = "black")+
   coord_flip() + 
-  labs(x = "Condition", y = "Count of patients exhibiting condition at least once", title = "Top 30 Outcomes by Distinct Patient Count Post-Index for NSAID Cohort")+
-  theme_minimal(base_size = 14) + 
-  theme(
-    plot.title = element_text(hjust = 0.5, face = "bold"),
-    axis.text = element_text(color = "black"),
-    axis.title = element_text(face = "bold")
-  )
+  labs(x = "Condition", y = "Count of patients exhibiting condition at least once", title = str_wrap("Top 30 Outcomes by Distinct Patient Count Post-Index for NSAID Cohort", width = 40))
+```
+This code chunk identifies the conditions that appear in the outcomes list but not the baseline list. 
+
+```{r}
+
+baseline_count <- baseline_conditions_distinct |>
+  count(CONCEPT_NAME, sort=TRUE)
+
+outcomes_count <- outcomes_distinct |>
+  count(CONCEPT_NAME, sort=TRUE)
+
+new_conditions <- setdiff(outcomes_count$CONCEPT_NAME, baseline_count$CONCEPT_NAME)
+
+new_conditions_df <- outcomes_count |>
+  filter(CONCEPT_NAME %in% new_conditions) |>
+  rename(c(Outcome = CONCEPT_NAME, `Patient Count` = n)) |>
+  kable(caption = "Outcomes that Did Not Appear in Baseline Condition List")
+
+new_conditions_df
 ```
 
 

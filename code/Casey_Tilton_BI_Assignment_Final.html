@@ -96,25 +96,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="load-necessary-packages" class="level2">
-<h2 class="anchored" data-anchor-id="load-necessary-packages">Load necessary packages</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forcats)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DescTools)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
+<section id="set-up" class="level2">
+<h2 class="anchored" data-anchor-id="set-up">Set up</h2>
 </section>
 <section id="eunomia-database-connection-setup" class="level1">
 <h1>Eunomia Database connection setup</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>connectionDetails <span class="ot">&lt;-</span> Eunomia<span class="sc">::</span><span class="fu">getEunomiaConnectionDetails</span>()</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># connect to Eunomia GiBleed</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>connection <span class="ot">&lt;-</span> DatabaseConnector<span class="sc">::</span><span class="fu">connect</span>(connectionDetails)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Build GiBleed Cohorts</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>Eunomia<span class="sc">::</span><span class="fu">createCohorts</span>(<span class="at">connectionDetails =</span> connectionDetails)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>connectionDetails <span class="ot">&lt;-</span> Eunomia<span class="sc">::</span><span class="fu">getEunomiaConnectionDetails</span>()</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># connect to Eunomia GiBleed</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>connection <span class="ot">&lt;-</span> DatabaseConnector<span class="sc">::</span><span class="fu">connect</span>(connectionDetails)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Build GiBleed Cohorts</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>Eunomia<span class="sc">::</span><span class="fu">createCohorts</span>(<span class="at">connectionDetails =</span> connectionDetails)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Cohorts created in table main.cohort</code></pre>
 </div>
@@ -140,10 +133,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="test-connection-and-create-dataframe-for-nsaids-cohort" class="level1">
 <h1>Test Connection and create dataframe for NSAIDs cohort</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>sql <span class="ot">&lt;-</span> <span class="st">"SELECT * FROM cohort WHERE COHORT_DEFINITION_ID = 4;"</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>tb <span class="ot">&lt;-</span> DatabaseConnector<span class="sc">::</span><span class="fu">querySql</span>(<span class="at">connection =</span> connection, <span class="at">sql =</span> sql) <span class="sc">|&gt;</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">as_tibble</span>()</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>tb</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>sql <span class="ot">&lt;-</span> <span class="st">"SELECT * FROM cohort WHERE COHORT_DEFINITION_ID = 4;"</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>tb <span class="ot">&lt;-</span> DatabaseConnector<span class="sc">::</span><span class="fu">querySql</span>(<span class="at">connection =</span> connection, <span class="at">sql =</span> sql) <span class="sc">|&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">as_tibble</span>()</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>tb</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2,694 × 4
    COHORT_DEFINITION_ID SUBJECT_ID COHORT_START_DATE COHORT_END_DATE
@@ -169,15 +162,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1>Demographics</h1>
 <p>The code below joins the cohort table to the person table, and calculates the age of each person.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>sql <span class="ot">&lt;-</span> <span class="st">"SELECT PERSON_ID, YEAR_OF_BIRTH,GENDER_SOURCE_VALUE, BIRTH_DATETIME FROM cohort INNER JOIN person ON</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="st">cohort.SUBJECT_ID = person.PERSON_ID</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="st">WHERE COHORT_DEFINITION_ID = 4;"</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>demographics_df <span class="ot">&lt;-</span> DatabaseConnector<span class="sc">::</span><span class="fu">querySql</span>(<span class="at">connection =</span> connection, <span class="at">sql =</span> sql) <span class="sc">|&gt;</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">AGE =</span> <span class="fu">as.integer</span>(<span class="fu">interval</span>(BIRTH_DATETIME, <span class="fu">Sys.Date</span>()) <span class="sc">/</span> <span class="fu">years</span>(<span class="dv">1</span>)))</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>demographics_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>sql <span class="ot">&lt;-</span> <span class="st">"SELECT PERSON_ID, YEAR_OF_BIRTH,GENDER_SOURCE_VALUE, BIRTH_DATETIME FROM cohort INNER JOIN person ON</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="st">cohort.SUBJECT_ID = person.PERSON_ID</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="st">WHERE COHORT_DEFINITION_ID = 4;"</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>demographics_df <span class="ot">&lt;-</span> DatabaseConnector<span class="sc">::</span><span class="fu">querySql</span>(<span class="at">connection =</span> connection, <span class="at">sql =</span> sql) <span class="sc">|&gt;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">AGE =</span> <span class="fu">as.integer</span>(<span class="fu">interval</span>(BIRTH_DATETIME, <span class="fu">Sys.Date</span>()) <span class="sc">/</span> <span class="fu">years</span>(<span class="dv">1</span>)))</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>demographics_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2,694 × 5
    PERSON_ID YEAR_OF_BIRTH GENDER_SOURCE_VALUE BIRTH_DATETIME        AGE
@@ -199,23 +192,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="distribution-of-age-in-years">Distribution of Age in Years</h2>
 <p>The histogram below visualizes the distribution of age in the NSAID cohort. The distribution has a long right tail of patients over the age of 90.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(demographics_df, <span class="fu">aes</span>(AGE)) <span class="sc">+</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">5</span>, <span class="at">fill =</span> <span class="st">"steelblue"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span> </span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Age (in 5 year bins)"</span>, </span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Count of Patients"</span>, </span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Distribution of Age in NSAID Cohort"</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span> </span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"black"</span>),</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>)</span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(demographics_df, <span class="fu">aes</span>(AGE)) <span class="sc">+</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">5</span>, <span class="at">fill =</span> <span class="st">"steelblue"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span> </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Age (in 5 year bins)"</span>, </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Count of Patients"</span>, </span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Distribution of Age in NSAID Cohort"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Casey_Tilton_BI_Assignment_Final_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="1440"></p>
+<p><img src="Casey_Tilton_BI_Assignment_Final_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="1440"></p>
 </figure>
 </div>
 </div>
@@ -225,11 +211,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="gender">Gender</h2>
 <p>There are 52 more females in the cohort than males.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>demographics_df <span class="sc">%&gt;%</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">Gender =</span> GENDER_SOURCE_VALUE)<span class="sc">|&gt;</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(Gender) <span class="sc">|&gt;</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Percentage =</span> scales<span class="sc">::</span><span class="fu">percent</span>(n <span class="sc">/</span> <span class="fu">sum</span>(n))) <span class="sc">|&gt;</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption =</span> <span class="st">"Gender Breakdown"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>demographics_df <span class="sc">%&gt;%</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">Gender =</span> GENDER_SOURCE_VALUE)<span class="sc">|&gt;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(Gender) <span class="sc">|&gt;</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Percentage =</span> scales<span class="sc">::</span><span class="fu">percent</span>(n <span class="sc">/</span> <span class="fu">sum</span>(n))) <span class="sc">|&gt;</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption =</span> <span class="st">"Gender Breakdown"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <caption>Gender Breakdown</caption>
@@ -257,24 +243,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>The chart below overlays histograms for men and women to show the differences in the patient count in 5 year age bins.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(demographics_df, <span class="fu">aes</span>(AGE, <span class="at">fill =</span> GENDER_SOURCE_VALUE)) <span class="sc">+</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">5</span>, <span class="at">position =</span> <span class="st">"identity"</span>, <span class="at">color =</span> <span class="st">"black"</span>, , <span class="at">alpha =</span> .<span class="dv">5</span>) <span class="sc">+</span> </span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Age(in 5 year bins)"</span>, </span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Count of Patients"</span>, </span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Distribution of Age in NSAID Cohort"</span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_discrete</span>(<span class="at">name =</span> <span class="st">"Gender"</span>) <span class="sc">+</span></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span> </span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"black"</span>),</span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>)</span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(demographics_df, <span class="fu">aes</span>(AGE, <span class="at">fill =</span> GENDER_SOURCE_VALUE)) <span class="sc">+</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">5</span>, <span class="at">position =</span> <span class="st">"identity"</span>, <span class="at">color =</span> <span class="st">"black"</span>, , <span class="at">alpha =</span> .<span class="dv">5</span>) <span class="sc">+</span> </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Age(in 5 year bins)"</span>, </span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Count of Patients"</span>, </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Distribution of Age in NSAID Cohort"</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_discrete</span>(<span class="at">name =</span> <span class="st">"Gender"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Casey_Tilton_BI_Assignment_Final_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="1440"></p>
+<p><img src="Casey_Tilton_BI_Assignment_Final_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="1440"></p>
 </figure>
 </div>
 </div>
@@ -285,21 +265,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1>Conditions at baseline</h1>
 <p>The nested SQL query joins the cohort table with the person table and the condition_occurrence table. It filters the result to only include condition occurrences that occured before the cohort start date. Finally, I join the concept_name to each concept_id.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>sql <span class="ot">&lt;-</span> <span class="st">"</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT concept.concept_name, nested.* FROM </span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="st">(</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT cohort.COHORT_START_DATE, co.* FROM cohort </span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="st">INNER JOIN person ON cohort.SUBJECT_ID = person.PERSON_ID </span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="st">INNER JOIN condition_occurrence co ON cohort.SUBJECT_ID = co.PERSON_ID</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="st">WHERE co.CONDITION_START_DATE &lt;  cohort.COHORT_START_DATE AND </span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="st">cohort.COHORT_DEFINITION_ID = 4</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="st">) nested </span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="st">INNER JOIN concept ON nested.CONDITION_CONCEPT_ID = concept.concept_id</span></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="st">;"</span></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>baseline_conditions <span class="ot">&lt;-</span> DatabaseConnector<span class="sc">::</span><span class="fu">querySql</span>(<span class="at">connection =</span> connection, <span class="at">sql =</span> sql) <span class="sc">|&gt;</span></span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    tibble<span class="sc">::</span><span class="fu">as_tibble</span>()</span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>baseline_conditions</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>sql <span class="ot">&lt;-</span> <span class="st">"</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT concept.concept_name, nested.* FROM </span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="st">(</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT cohort.COHORT_START_DATE, co.* FROM cohort </span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="st">INNER JOIN person ON cohort.SUBJECT_ID = person.PERSON_ID </span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="st">INNER JOIN condition_occurrence co ON cohort.SUBJECT_ID = co.PERSON_ID</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="st">WHERE co.CONDITION_START_DATE &lt;  cohort.COHORT_START_DATE AND </span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="st">cohort.COHORT_DEFINITION_ID = 4</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="st">) nested </span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="st">INNER JOIN concept ON nested.CONDITION_CONCEPT_ID = concept.concept_id</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="st">;"</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>baseline_conditions <span class="ot">&lt;-</span> DatabaseConnector<span class="sc">::</span><span class="fu">querySql</span>(<span class="at">connection =</span> connection, <span class="at">sql =</span> sql) <span class="sc">|&gt;</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    tibble<span class="sc">::</span><span class="fu">as_tibble</span>()</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>baseline_conditions</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 42,599 × 18
    CONCEPT_NAME               COHORT_START_DATE CONDITION_OCCURRENCE…¹ PERSON_ID
@@ -325,30 +305,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>This chart visualizes the top 30 baseline conditions sorted by the total amount of times the condition_concept_id occurs across the entire cohort.The remainder of the conditions are lumped into an “other” category.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(baseline_conditions, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">fct_rev</span>(<span class="fu">fct_lump_n</span>(<span class="fu">fct_infreq</span>(CONCEPT_NAME), <span class="at">n =</span> <span class="dv">30</span>)))) <span class="sc">+</span> </span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"steelblue"</span>, <span class="at">color =</span> <span class="st">"black"</span>)<span class="sc">+</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()<span class="sc">+</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Condition"</span>, <span class="at">y =</span> <span class="st">"Count of Condition Occurrences"</span>, <span class="at">title =</span> <span class="st">"Top 30 Baseline Conditions by Occurrence Count for NSAID Cohort"</span>) <span class="sc">+</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span> </span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"black"</span>),</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>)</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(baseline_conditions, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">fct_rev</span>(<span class="fu">fct_lump_n</span>(<span class="fu">fct_infreq</span>(CONCEPT_NAME), <span class="at">n =</span> <span class="dv">30</span>)))) <span class="sc">+</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"steelblue"</span>, <span class="at">color =</span> <span class="st">"black"</span>)<span class="sc">+</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()<span class="sc">+</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Condition"</span>, <span class="at">y =</span> <span class="st">"Count of Condition Occurrences"</span>, <span class="at">title =</span> <span class="fu">str_wrap</span>(<span class="st">"Top 30 Baseline Conditions by Occurrence Count for NSAID Cohort"</span>, <span class="at">width =</span> <span class="dv">40</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Casey_Tilton_BI_Assignment_Final_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="1440"></p>
+<p><img src="Casey_Tilton_BI_Assignment_Final_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="1440"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>It is possible that the cohort could include patients that have had large number of occurrences of the same condition.To remove the potential effect of this type of outlier, the following code creates a dataframe that counts only one occurrence of a condition per person. The results below show that there are minimal changes in the ranked order between the two lists. However, the effect of multiple occurrences of the most common conditions is minimized.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>baseline_conditions_distinct <span class="ot">&lt;-</span> baseline_conditions <span class="sc">|&gt;</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(CONCEPT_NAME, PERSON_ID, <span class="at">.keep_all=</span><span class="cn">TRUE</span>)</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>baseline_conditions_distinct</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>baseline_conditions_distinct <span class="ot">&lt;-</span> baseline_conditions <span class="sc">|&gt;</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(CONCEPT_NAME, PERSON_ID, <span class="at">.keep_all=</span><span class="cn">TRUE</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>baseline_conditions_distinct</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 23,732 × 18
    CONCEPT_NAME               COHORT_START_DATE CONDITION_OCCURRENCE…¹ PERSON_ID
@@ -374,20 +348,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>This chart visualizes the top 30 baseline conditions sorted by the count of patients that have had an occurrence of the condition one or more times.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(baseline_conditions_distinct, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">fct_rev</span>(<span class="fu">fct_lump_n</span>(<span class="fu">fct_infreq</span>(CONCEPT_NAME), <span class="at">n =</span> <span class="dv">30</span>)))) <span class="sc">+</span> </span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"steelblue"</span>, <span class="at">color =</span> <span class="st">"black"</span>)<span class="sc">+</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()<span class="sc">+</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Condition"</span>, <span class="at">y =</span> <span class="st">"Count of patients exhibiting condition at least once"</span>, <span class="at">title =</span> <span class="st">"Top 30 Baseline Conditions by Distinct Patient Count for NSAID Cohort"</span>)<span class="sc">+</span></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span> </span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"black"</span>),</span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>)</span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(baseline_conditions_distinct, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">fct_rev</span>(<span class="fu">fct_lump_n</span>(<span class="fu">fct_infreq</span>(CONCEPT_NAME), <span class="at">n =</span> <span class="dv">30</span>)))) <span class="sc">+</span> </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"steelblue"</span>, <span class="at">color =</span> <span class="st">"black"</span>)<span class="sc">+</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()<span class="sc">+</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Condition"</span>, <span class="at">y =</span> <span class="st">"Count of patients exhibiting condition at least once"</span>, <span class="at">title =</span> <span class="fu">str_wrap</span>(<span class="st">"Top 30 Baseline Conditions by Distinct Patient Count for NSAID Cohort"</span>,<span class="at">width =</span> <span class="dv">40</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Casey_Tilton_BI_Assignment_Final_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="1440"></p>
+<p><img src="Casey_Tilton_BI_Assignment_Final_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="1440"></p>
 </figure>
 </div>
 </div>
@@ -397,23 +365,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1>Drug use at baseline</h1>
 <p>The SQL code below captures the concept names of each drug_exposure for the NSAID cohort that occurred before each patient’s cohort start date. Some of the concept names are very long, so I created a new column called drug_name_trunc that is the first 45 characters of each text string.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>sql <span class="ot">&lt;-</span> <span class="st">"</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT concept.concept_name, nested.* FROM (</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT * from cohort INNER JOIN</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="st">drug_exposure de ON</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="st">de.person_id = cohort.subject_id </span></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="st">WHERE de.drug_exposure_start_date &lt;  cohort.COHORT_START_DATE AND </span></span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="st">cohort.COHORT_DEFINITION_ID = 4</span></span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="st">) nested INNER JOIN concept ON</span></span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="st">nested.drug_concept_id = concept.concept_id</span></span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="st">;"</span></span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>drug_exposure_baseline <span class="ot">&lt;-</span> DatabaseConnector<span class="sc">::</span><span class="fu">querySql</span>(<span class="at">connection =</span> connection, <span class="at">sql =</span> sql) <span class="sc">|&gt;</span></span>
-<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
-<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span> (<span class="at">drug_name_trunc =</span> <span class="fu">substr</span>(CONCEPT_NAME, <span class="dv">1</span>, <span class="dv">45</span>))</span>
-<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>drug_exposure_baseline</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>sql <span class="ot">&lt;-</span> <span class="st">"</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT concept.concept_name, nested.* FROM (</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT * from cohort INNER JOIN</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="st">drug_exposure de ON</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="st">de.person_id = cohort.subject_id </span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="st">WHERE de.drug_exposure_start_date &lt;  cohort.COHORT_START_DATE AND </span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="st">cohort.COHORT_DEFINITION_ID = 4</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="st">) nested INNER JOIN concept ON</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="st">nested.drug_concept_id = concept.concept_id</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="st">;"</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>drug_exposure_baseline <span class="ot">&lt;-</span> DatabaseConnector<span class="sc">::</span><span class="fu">querySql</span>(<span class="at">connection =</span> connection, <span class="at">sql =</span> sql) <span class="sc">|&gt;</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span> (<span class="at">drug_name_trunc =</span> <span class="fu">substr</span>(CONCEPT_NAME, <span class="dv">1</span>, <span class="dv">45</span>))</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>drug_exposure_baseline</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 43,105 × 29
    CONCEPT_NAME                COHORT_DEFINITION_ID SUBJECT_ID COHORT_START_DATE
@@ -438,42 +406,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(drug_exposure_baseline, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">fct_rev</span>(<span class="fu">fct_lump_n</span>(<span class="fu">fct_infreq</span>(drug_name_trunc), <span class="at">n =</span> <span class="dv">30</span>)))) <span class="sc">+</span> </span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"steelblue"</span>, <span class="at">color =</span> <span class="st">"black"</span>)<span class="sc">+</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()<span class="sc">+</span></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Drug"</span>, <span class="at">y =</span> <span class="st">"Count of drug exposures"</span>, <span class="at">title =</span> <span class="st">"Top 30 Drugs by exposure count for NSAID Cohort pre-idex"</span>)<span class="sc">+</span></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span> </span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"black"</span>),</span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>)</span>
-<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(drug_exposure_baseline, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">fct_rev</span>(<span class="fu">fct_lump_n</span>(<span class="fu">fct_infreq</span>(drug_name_trunc), <span class="at">n =</span> <span class="dv">30</span>)))) <span class="sc">+</span> </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"steelblue"</span>, <span class="at">color =</span> <span class="st">"black"</span>)<span class="sc">+</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()<span class="sc">+</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Drug"</span>, <span class="at">y =</span> <span class="st">"Count of drug exposures"</span>, <span class="at">title =</span> <span class="fu">str_wrap</span>(<span class="st">"Top 30 Drugs by exposure count for NSAID Cohort pre-index"</span>, <span class="at">width =</span> <span class="dv">40</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Casey_Tilton_BI_Assignment_Final_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="1440"></p>
+<p><img src="Casey_Tilton_BI_Assignment_Final_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="1440"></p>
 </figure>
 </div>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>drug_exposures_distinct <span class="ot">&lt;-</span> drug_exposure_baseline <span class="sc">|&gt;</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(CONCEPT_NAME, PERSON_ID, <span class="at">.keep_all=</span><span class="cn">TRUE</span>)</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(drug_exposures_distinct, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">fct_rev</span>(<span class="fu">fct_lump_n</span>(<span class="fu">fct_infreq</span>(drug_name_trunc), <span class="at">n =</span> <span class="dv">30</span>)))) <span class="sc">+</span> </span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"steelblue"</span>, <span class="at">color =</span> <span class="st">"black"</span>)<span class="sc">+</span></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()<span class="sc">+</span></span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Drug"</span>, <span class="at">y =</span> <span class="st">"Count of patients exposed to drug at least once"</span>, <span class="at">title =</span> <span class="st">"Top 30 Drugs by patient count for NSAID Cohort pre-idex"</span>)<span class="sc">+</span></span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span> </span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"black"</span>),</span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>)</span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>drug_exposures_distinct <span class="ot">&lt;-</span> drug_exposure_baseline <span class="sc">|&gt;</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(CONCEPT_NAME, PERSON_ID, <span class="at">.keep_all=</span><span class="cn">TRUE</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(drug_exposures_distinct, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">fct_rev</span>(<span class="fu">fct_lump_n</span>(<span class="fu">fct_infreq</span>(drug_name_trunc), <span class="at">n =</span> <span class="dv">30</span>)))) <span class="sc">+</span> </span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"steelblue"</span>, <span class="at">color =</span> <span class="st">"black"</span>)<span class="sc">+</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()<span class="sc">+</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Drug"</span>, <span class="at">y =</span> <span class="st">"Count of patients exposed to drug at least once"</span>, <span class="at">title =</span> <span class="fu">str_wrap</span>(<span class="st">"Top 30 Drugs by Patient Count for NSAID Cohort Pre-index"</span>, <span class="at">width =</span> <span class="dv">40</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Casey_Tilton_BI_Assignment_Final_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="1440"></p>
+<p><img src="Casey_Tilton_BI_Assignment_Final_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="1440"></p>
 </figure>
 </div>
 </div>
@@ -483,21 +439,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1>Outcomes Post-index</h1>
 <p>The outcomes dataframe includes condition occurrences for each patient that occurred on or after their cohort start date.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>sql <span class="ot">&lt;-</span> <span class="st">"</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT concept.concept_name, nested.* FROM (</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT cohort.COHORT_START_DATE, co.* FROM cohort INNER JOIN person ON</span></span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="st">cohort.SUBJECT_ID = person.PERSON_ID INNER JOIN condition_occurrence co ON</span></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="st">cohort.SUBJECT_ID = co.PERSON_ID</span></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="st">WHERE co.CONDITION_START_DATE &gt;=  cohort.COHORT_START_DATE AND </span></span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="st">cohort.COHORT_DEFINITION_ID = 4</span></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="st">) nested INNER JOIN concept ON</span></span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="st">nested.CONDITION_CONCEPT_ID = concept.concept_id</span></span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="st">;"</span></span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>outcomes <span class="ot">&lt;-</span> DatabaseConnector<span class="sc">::</span><span class="fu">querySql</span>(<span class="at">connection =</span> connection, <span class="at">sql =</span> sql) <span class="sc">|&gt;</span></span>
-<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>    tibble<span class="sc">::</span><span class="fu">as_tibble</span>()</span>
-<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>outcomes</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>sql <span class="ot">&lt;-</span> <span class="st">"</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT concept.concept_name, nested.* FROM (</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT cohort.COHORT_START_DATE, co.* FROM cohort INNER JOIN person ON</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="st">cohort.SUBJECT_ID = person.PERSON_ID INNER JOIN condition_occurrence co ON</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="st">cohort.SUBJECT_ID = co.PERSON_ID</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="st">WHERE co.CONDITION_START_DATE &gt;=  cohort.COHORT_START_DATE AND </span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="st">cohort.COHORT_DEFINITION_ID = 4</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="st">) nested INNER JOIN concept ON</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="st">nested.CONDITION_CONCEPT_ID = concept.concept_id</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="st">;"</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>outcomes <span class="ot">&lt;-</span> DatabaseConnector<span class="sc">::</span><span class="fu">querySql</span>(<span class="at">connection =</span> connection, <span class="at">sql =</span> sql) <span class="sc">|&gt;</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>    tibble<span class="sc">::</span><span class="fu">as_tibble</span>()</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>outcomes</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 22,733 × 18
    CONCEPT_NAME               COHORT_START_DATE CONDITION_OCCURRENCE…¹ PERSON_ID
@@ -522,16 +478,28 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(outcomes, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">fct_rev</span>(<span class="fu">fct_lump_n</span>(<span class="fu">fct_infreq</span>(CONCEPT_NAME), <span class="at">n =</span> <span class="dv">30</span>)))) <span class="sc">+</span> </span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"steelblue"</span>, <span class="at">color =</span> <span class="st">"black"</span>)<span class="sc">+</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span> </span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Condition"</span>, <span class="at">y =</span> <span class="st">"Count of Condition Occurrences"</span>, <span class="at">title =</span> <span class="st">"Top 30 Outcomes by Occurrence Count post-index for NSAID Cohort"</span>)<span class="sc">+</span></span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span> </span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"black"</span>),</span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>)</span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(outcomes, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">fct_rev</span>(<span class="fu">fct_lump_n</span>(<span class="fu">fct_infreq</span>(CONCEPT_NAME), <span class="at">n =</span> <span class="dv">30</span>)))) <span class="sc">+</span> </span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"steelblue"</span>, <span class="at">color =</span> <span class="st">"black"</span>)<span class="sc">+</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span> </span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Condition"</span>, <span class="at">y =</span> <span class="st">"Count of Condition Occurrences"</span>, <span class="at">title =</span> <span class="fu">str_wrap</span>(<span class="st">"Top 30 Outcomes by Occurrence Count post-index for NSAID Cohort"</span>, <span class="at">width =</span> <span class="dv">40</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Casey_Tilton_BI_Assignment_Final_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="1440"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>When counting only one occurrence per patient, Osteoarthritis is the most common outcome for the NSAID cohort post index. When sorting the condition list by total occurrence count, it is the fourth most common</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>outcomes_distinct <span class="ot">&lt;-</span> outcomes <span class="sc">|&gt;</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(CONCEPT_NAME, PERSON_ID, <span class="at">.keep_all=</span><span class="cn">TRUE</span>)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(outcomes_distinct, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">fct_rev</span>(<span class="fu">fct_lump_n</span>(<span class="fu">fct_infreq</span>(CONCEPT_NAME), <span class="at">n =</span> <span class="dv">30</span>)))) <span class="sc">+</span> </span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"steelblue"</span>, <span class="at">color =</span> <span class="st">"black"</span>)<span class="sc">+</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span> </span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Condition"</span>, <span class="at">y =</span> <span class="st">"Count of patients exhibiting condition at least once"</span>, <span class="at">title =</span> <span class="fu">str_wrap</span>(<span class="st">"Top 30 Outcomes by Distinct Patient Count Post-Index for NSAID Cohort"</span>, <span class="at">width =</span> <span class="dv">40</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -540,27 +508,74 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+<p>This code chunk identifies the conditions that appear in the outcomes list but not the baseline list.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>outcomes_distinct <span class="ot">&lt;-</span> outcomes <span class="sc">|&gt;</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(CONCEPT_NAME, PERSON_ID, <span class="at">.keep_all=</span><span class="cn">TRUE</span>)</span>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>baseline_count <span class="ot">&lt;-</span> baseline_conditions_distinct <span class="sc">|&gt;</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(CONCEPT_NAME, <span class="at">sort=</span><span class="cn">TRUE</span>)</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(outcomes_distinct, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">fct_rev</span>(<span class="fu">fct_lump_n</span>(<span class="fu">fct_infreq</span>(CONCEPT_NAME), <span class="at">n =</span> <span class="dv">30</span>)))) <span class="sc">+</span> </span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"steelblue"</span>, <span class="at">color =</span> <span class="st">"black"</span>)<span class="sc">+</span></span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span> </span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Condition"</span>, <span class="at">y =</span> <span class="st">"Count of patients exhibiting condition at least once"</span>, <span class="at">title =</span> <span class="st">"Top 30 Outcomes by Distinct Patient Count Post-Index for NSAID Cohort"</span>)<span class="sc">+</span></span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span> </span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
-<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"black"</span>),</span>
-<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>)</span>
-<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>outcomes_count <span class="ot">&lt;-</span> outcomes_distinct <span class="sc">|&gt;</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(CONCEPT_NAME, <span class="at">sort=</span><span class="cn">TRUE</span>)</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>new_conditions <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(outcomes_count<span class="sc">$</span>CONCEPT_NAME, baseline_count<span class="sc">$</span>CONCEPT_NAME)</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>new_conditions_df <span class="ot">&lt;-</span> outcomes_count <span class="sc">|&gt;</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(CONCEPT_NAME <span class="sc">%in%</span> new_conditions) <span class="sc">|&gt;</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="fu">c</span>(<span class="at">Outcome =</span> CONCEPT_NAME, <span class="st">`</span><span class="at">Patient Count</span><span class="st">`</span> <span class="ot">=</span> n)) <span class="sc">|&gt;</span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption =</span> <span class="st">"Outcomes that Did Not Appear in Baseline Condition List"</span>)</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>new_conditions_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Casey_Tilton_BI_Assignment_Final_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="1440"></p>
-</figure>
-</div>
+<table class="caption-top table table-sm table-striped small">
+<caption>Outcomes that Did Not Appear in Baseline Condition List</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Outcome</th>
+<th style="text-align: right;">Patient Count</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Osteoarthritis</td>
+<td style="text-align: right;">2694</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Gastrointestinal hemorrhage</td>
+<td style="text-align: right;">479</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Diverticular disease</td>
+<td style="text-align: right;">405</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Osteoporosis</td>
+<td style="text-align: right;">171</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Atrial fibrillation</td>
+<td style="text-align: right;">137</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Alzheimer’s disease</td>
+<td style="text-align: right;">117</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Pathological fracture due to osteoporosis</td>
+<td style="text-align: right;">56</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Pneumonia</td>
+<td style="text-align: right;">52</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Hypothyroidism</td>
+<td style="text-align: right;">31</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Familial Alzheimer’s disease of early onset</td>
+<td style="text-align: right;">19</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <section id="citations" class="level2">
